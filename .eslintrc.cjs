@@ -4,9 +4,9 @@ module.exports = {
         "es2021": true
     },
     "extends": [
-        "eslint:recommended",
-        "plugin:@typescript-eslint/recommended",
-        "plugin:vue/vue3-essential"
+        'eslint:recommended', // JavaScript rules
+        'plugin:@typescript-eslint/recommended', // TypeScript rules
+        'plugin:vue/vue3-recommended' // Vue3.js rules
     ],
     "overrides": [
         {
@@ -30,5 +30,7 @@ module.exports = {
         "@typescript-eslint",
         "vue"
     ],
-    "rules": {}
+    "rules": {
+        'vue/multi-word-component-names': 0
+    }
 }
