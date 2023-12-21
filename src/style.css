@@ -1,3 +1,4 @@
-@tailwind base;
+/* 使用 tailwindcss 的重置样式文件，影响到了组件 button 的样式 */
+/* @tailwind base; */
 @tailwind components;
 @tailwind utilities;
