@@ -1,7 +1,8 @@
 <script setup lang = "ts">
 
-import { IdcardTwoTone, LockTwoTone, EyeTwoTone, EyeInvisibleOutlined, PhoneTwoTone, MailTwoTone, LikeFilled } from '@ant-design/icons-vue';
-
+import {  EyeTwoTone, EyeInvisibleOutlined,
+  CustomerServiceOutlined,GithubFilled,QqCircleFilled,AlipayCircleFilled } from '@ant-design/icons-vue';
+import { h } from 'vue';
 import { ref } from 'vue'
 const activeKey = ref('1')
 const userName = ref('')
@@ -18,13 +19,19 @@ const size = ref('large')
 
 <template>
   <div class="flex justify-center h-screen w-full">
-    <div class="flex flex-col  ">
+    <div class="container">
+      <!--title area-->
+      <div class="header">
+        <h1>《滕王阁序》</h1>
+        <p>
+          老当益壮，宁移白首之心？穷且益坚，不坠青云之志。
+        </p>
+        <p>
+          东隅已逝，桑榆非晚。
+        </p>
+      </div>
       <!--main area-->
-      <div class="main w-80 py-28">
-        <!--title area-->
-        <div class="text-center mb-20">
-          <h1>title area - 标题</h1>
-        </div>
+      <div class="main">
         <div>
           <a-tabs v-model:activeKey="activeKey" centered @tab-click="tabClick" @change="changHandle">
             <!--login method 1-->
@@ -33,13 +40,17 @@ const size = ref('large')
                 <!--userName-->
                 <a-input v-model:value="userName" placeholder="userName : admin" :size="size">
                   <template #prefix>
-                    <IdcardTwoTone />
+                    <svg class="icon" aria-hidden="true">
+                      <use xlink:href="#icon-icon-user"/>
+                    </svg>
                   </template>
                 </a-input>
                 <!--passWord-->
                 <a-input-password v-model:value="passWord" placeholder="passWord : admin" :size="size">
                   <template #prefix>
-                    <LockTwoTone />
+                    <svg class="icon" aria-hidden="true">
+                      <use xlink:href="#icon-Password"/>
+                    </svg>
                   </template>
                   <template #iconRender="show">
                     <EyeTwoTone v-if="show" />
@@ -54,14 +65,18 @@ const size = ref('large')
                 <!--phoneNumber-->
                 <a-input v-model:value="userName" placeholder="phoneNumber" :size="size">
                   <template #prefix>
-                    <PhoneTwoTone />
+                    <svg class="icon" aria-hidden="true">
+                      <use xlink:href="#icon-phone_iphone" />
+                    </svg>
                   </template>
                 </a-input>
                 <!--verify-->
                 <div class="flex justify-between">
                   <a-input v-model:value="userName" placeholder="verify" :size="size" class="w-8/12	 mr-1 ">
                     <template #prefix>
-                      <MailTwoTone />
+                      <svg class="icon" aria-hidden="true">
+                        <use xlink:href="#icon-yanzhengma-"/>
+                      </svg>
                     </template>
                   </a-input>
                   <a-button class="w-4/12" :size="size">
@@ -87,34 +102,60 @@ const size = ref('large')
         </div>
         <div class="flex justify-between mt-3 items-center">
           <span class="text-sm flex">其他登录方式</span>
-          <a>icon</a>
-          <a>icon</a>
-          <a>icon</a>
+          <a-space warp>
+            <a-button shape="circle" :icon="h(GithubFilled)" />
+          </a-space>
+          <a-space warp>
+            <a-button shape="circle" :icon="h(QqCircleFilled)" />
+          </a-space>
+          <a-space warp>
+            <a-button shape="circle" :icon="h(AlipayCircleFilled)" />
+          </a-space>
           <a-button type="link" href="#" class="text-sm pr-0">
             注册账号
           </a-button>
         </div>
       </div>
       <!--foot area-->
-      <div class="footer mt-44 flex flex-col ">
-        <div class="mb-2 flex justify-center text-slate-400	">
-          <span class="mr-5">帮助</span>
-          <span class="mr-5">隐私</span>
-          <span class="mr-5">条款</span>
+      <div class="footer">
+        <div class="flex justify-center mb-2">
+          <a-button type="link" href="#">
+            GitHub
+          </a-button>
+          <a-button type="link" href="#">
+            GitHub
+          </a-button>
+          <a-button type="link" href="#">
+            GitHub
+          </a-button>
         </div>
-        <div class=" flex justify-center text-slate-400	">
-          Copyright © 2020 苏大强科技有限公司
+        <div class="text-center">
+          Copyright © GitHub
         </div>
       </div>
     </div>
-    <a-float-button type="primary" :style="{ right: '94px'}">
+    <!--FloatButton-->
+    <a-float-button-group trigger="hover" type="primary">
       <template #icon>
-        <LikeFilled />
+        <CustomerServiceOutlined />
       </template>
-    </a-float-button>
+      <a-float-button href="https://github.com/fortylee/admin-vue3" target="_blank">
+        <template #icon>
+          <GithubFilled />
+        </template>
+      </a-float-button>
+    </a-float-button-group>
   </div>
 </template>
 
-<style scoped lang="postcss">
-
+<style scoped lang = "postcss">
+.container {
+  @apply flex flex-col justify-between w-11/12 sm:w-96 md:w-96 lg:w-96 xl:w-96 2xl:w-96;
+}
+.header {
+  @apply text-center mt-32 italic;
+}
+.footer {
+  @apply flex flex-col mb-4 text-neutral-400 text-sm;
+}
 </style>

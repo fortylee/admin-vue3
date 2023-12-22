@@ -4,6 +4,10 @@ import App from './App.vue';
 import 'ant-design-vue/dist/reset.css';
 import './style.css';
 
+// iconfont
+import '../public/iconfont/iconfont.css'
+import '../public/iconfont/iconfont.js'
+
 const app = createApp(App)
 
 // using the ant-design-vue plugin

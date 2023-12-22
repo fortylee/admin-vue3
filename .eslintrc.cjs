@@ -33,6 +33,7 @@ module.exports = {
     "rules": {
         'vue/multi-word-component-names': "off",
         "vue/max-attributes-per-line": "off",
-        "vue/html-closing-bracket-newline": "off"
+        "vue/html-closing-bracket-newline": "off",
+        'vue/html-closing-bracket-spacing': 'off',
     }
 }

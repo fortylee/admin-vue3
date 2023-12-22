@@ -2,3 +2,8 @@
 /* @tailwind base; */
 @tailwind components;
 @tailwind utilities;
+
+/* Set the global color of font icons */
+use {
+   color: #1890ff;
+}
