@@ -1,20 +1,53 @@
 <script setup lang = "ts">
+import {
+  EyeTwoTone,
+  EyeInvisibleOutlined,
+  TwitterCircleFilled,
+  CustomerServiceOutlined,
+  GithubFilled,
+  AlipayCircleFilled
+} from '@ant-design/icons-vue';
 
-import {  EyeTwoTone, EyeInvisibleOutlined,
-  CustomerServiceOutlined,GithubFilled,QqCircleFilled,AlipayCircleFilled } from '@ant-design/icons-vue';
 import { h } from 'vue';
 import { ref } from 'vue'
+import router from '../router'
 const activeKey = ref('1')
 const userName = ref('')
 const passWord = ref('')
-
+const size = ref('large')
 function tabClick() {
   console.log("被点击了")
 }
+
+import { reactive } from 'vue';
+
+interface FormState {
+  username: string;
+  password: string;
+  remember: boolean;
+}
+
+const formState = reactive<FormState>({
+  username: '',
+  password: '',
+  remember: true,
+});
+const onFinish = (values: any) => {
+  console.log('Success:', values);
+};
+
+const onFinishFailed = (errorInfo: any) => {
+  console.log('Failed:', errorInfo);
+};
 function changHandle(key: string) {
   console.log(key)
 }
-const size = ref('large')
+
+function buttonHandle () {
+  
+    router.push({ name: 'Home'})
+}
+
 </script>
 
 <template>
@@ -37,26 +70,54 @@ const size = ref('large')
             <!--login method 1-->
             <a-tab-pane key="1" tab="账号密码登录">
               <a-space direction="vertical" class="w-full" :size="size">
-                <!--userName-->
-                <a-input v-model:value="userName" placeholder="userName : admin" :size="size">
-                  <template #prefix>
-                    <svg class="icon" aria-hidden="true">
-                      <use xlink:href="#icon-icon-user"/>
-                    </svg>
-                  </template>
-                </a-input>
-                <!--passWord-->
-                <a-input-password v-model:value="passWord" placeholder="passWord : admin" :size="size">
-                  <template #prefix>
-                    <svg class="icon" aria-hidden="true">
-                      <use xlink:href="#icon-Password"/>
-                    </svg>
-                  </template>
-                  <template #iconRender="show">
-                    <EyeTwoTone v-if="show" />
-                    <EyeInvisibleOutlined v-else />
-                  </template>
-                </a-input-password>
+                <a-form
+                  :model="formState"
+                  name="basic"
+                  :label-col="{ span: 8 }"
+                  :wrapper-col="{ span: 16 }"
+                  autocomplete="off"
+                  @finish="onFinish"
+                  @finishFailed="onFinishFailed"
+                >
+                  <!--form - username-->
+                  <a-form-item
+                    name="username"
+                    :rules="[{ required: true, message: '请输入账号!' }]"
+                  >
+                    <a-input v-model:value="formState.username" placeholder="usernames : admin" :size="size">
+                      <template #prefix>
+                        <svg class="icon" aria-hidden="true">
+                          <use xlink:href="#icon-icon-user"/>
+                        </svg>
+                      </template>
+                    </a-input>
+                  </a-form-item>
+                  <!--form - password-->
+                  <a-form-item
+                    name="password"
+                    :rules="[{ required: true, message: '请输入密码!' }]"
+                  >
+                    <a-input-password v-model:value="formState.password" placeholder="passwrod : admin" :size="size">
+                      <template #prefix>
+                        <svg class="icon" aria-hidden="true">
+                          <use xlink:href="#icon-Password"/>
+                        </svg>
+                      </template>
+                      <template #iconRender="show">
+                        <EyeTwoTone v-if="show" />
+                        <EyeInvisibleOutlined v-else />
+                      </template>
+                    </a-input-password>
+                  </a-form-item>
+                  <!--form - remember me-->
+                  <a-form-item name="remember" :wrapper-col="{ offset: 8, span: 16 }">
+                    <a-checkbox v-model:checked="formState.remember">Remember me</a-checkbox>
+                  </a-form-item>
+                  <!--form - submit-->
+                  <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
+                    <a-button type="primary" html-type="submit">Submit</a-button>
+                  </a-form-item>
+                </a-form>
               </a-space>
             </a-tab-pane>
             <!--login method 2-->
@@ -96,21 +157,23 @@ const size = ref('large')
           </a-button>
         </div>
         <div>
-          <a-button type="primary" size="large" block>
+          <a-button type="primary" size="large" block @click="buttonHandle">
             登录
           </a-button>
         </div>
         <div class="flex justify-between mt-3 items-center">
-          <span class="text-sm flex">其他登录方式</span>
-          <a-space warp>
-            <a-button shape="circle" :icon="h(GithubFilled)" />
-          </a-space>
-          <a-space warp>
-            <a-button shape="circle" :icon="h(QqCircleFilled)" />
-          </a-space>
-          <a-space warp>
-            <a-button shape="circle" :icon="h(AlipayCircleFilled)" />
-          </a-space>
+          <span class="text-sm">其他登录方式</span>
+          <div class="grow ">
+            <a-button type="link" class="text-gray-500 pr-1 pt-0" >
+              <TwitterCircleFilled class="text-2xl"/>
+            </a-button>
+            <a-button type="link" class="text-gray-500 pr-1 " >
+              <AlipayCircleFilled class="text-2xl"/>
+            </a-button>
+            <a-button type="link" class="text-gray-500" >
+              <GithubFilled class="text-2xl"/>
+            </a-button>
+          </div>
           <a-button type="link" href="#" class="text-sm pr-0">
             注册账号
           </a-button>
@@ -150,10 +213,10 @@ const size = ref('large')
 
 <style scoped lang = "postcss">
 .container {
-  @apply flex flex-col justify-between w-11/12 sm:w-96 md:w-96 lg:w-96 xl:w-96 2xl:w-96;
+  @apply flex flex-col justify-between  w-11/12 sm:w-96 md:w-96 lg:w-96 xl:w-96 2xl:w-96;
 }
 .header {
-  @apply text-center mt-32 italic;
+  @apply text-center italic mt-24;
 }
 .footer {
   @apply flex flex-col mb-4 text-neutral-400 text-sm;

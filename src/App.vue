@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import Login from './components/login.vue'
 
 </script>
 
 <template>
-  <Login/>
+  <router-view/>
 </template>
 
-<style scoped>
+<style scoped lang = "postcss">
 
 </style>
