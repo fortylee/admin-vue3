@@ -7,45 +7,48 @@ import {
   GithubFilled,
   AlipayCircleFilled
 } from '@ant-design/icons-vue';
+import { reactive, ref } from 'vue';
+import openNotification from '@/utils/notification.ts'
 
-import { h } from 'vue';
-import { ref } from 'vue'
+
 import router from '../router'
 const activeKey = ref('1')
-const userName = ref('')
-const passWord = ref('')
+const phone = ref('')
+const verify = ref('')
 const size = ref('large')
+
+
+
 function tabClick() {
   console.log("被点击了")
 }
+function changHandle(key: string) {
+  console.log(key)
+}
 
-import { reactive } from 'vue';
 
+// form data type
 interface FormState {
   username: string;
   password: string;
-  remember: boolean;
 }
 
 const formState = reactive<FormState>({
   username: '',
   password: '',
-  remember: true,
 });
-const onFinish = (values: any) => {
-  console.log('Success:', values);
+const onFinish = (values: FormState) => {
+  if (values.username === 'admin' && values.password === 'admin' ){
+    router.push('home')
+  } else {
+    console.log(values.username)
+    console.log(values.password)
+    openNotification('error', '账号或密码错误，请检查！')
+  }
 };
 
-const onFinishFailed = (errorInfo: any) => {
-  console.log('Failed:', errorInfo);
-};
-function changHandle(key: string) {
-  console.log(key)
-}
-
-function buttonHandle () {
-  
-    router.push({ name: 'Home'})
+const submit = () => {
+  console.log(formState)
 }
 
 </script>
@@ -73,11 +76,8 @@ function buttonHandle () {
                 <a-form
                   :model="formState"
                   name="basic"
-                  :label-col="{ span: 8 }"
-                  :wrapper-col="{ span: 16 }"
                   autocomplete="off"
                   @finish="onFinish"
-                  @finishFailed="onFinishFailed"
                 >
                   <!--form - username-->
                   <a-form-item
@@ -109,14 +109,6 @@ function buttonHandle () {
                       </template>
                     </a-input-password>
                   </a-form-item>
-                  <!--form - remember me-->
-                  <a-form-item name="remember" :wrapper-col="{ offset: 8, span: 16 }">
-                    <a-checkbox v-model:checked="formState.remember">Remember me</a-checkbox>
-                  </a-form-item>
-                  <!--form - submit-->
-                  <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
-                    <a-button type="primary" html-type="submit">Submit</a-button>
-                  </a-form-item>
                 </a-form>
               </a-space>
             </a-tab-pane>
@@ -124,7 +116,7 @@ function buttonHandle () {
             <a-tab-pane key="2" tab="手机号码登录">
               <a-space direction="vertical" class="w-full" :size="size">
                 <!--phoneNumber-->
-                <a-input v-model:value="userName" placeholder="phoneNumber" :size="size">
+                <a-input v-model:value="phone" placeholder="phoneNumber" :size="size">
                   <template #prefix>
                     <svg class="icon" aria-hidden="true">
                       <use xlink:href="#icon-phone_iphone" />
@@ -133,7 +125,7 @@ function buttonHandle () {
                 </a-input>
                 <!--verify-->
                 <div class="flex justify-between">
-                  <a-input v-model:value="userName" placeholder="verify" :size="size" class="w-8/12	 mr-1 ">
+                  <a-input v-model:value="verify" placeholder="verify" :size="size" class="w-8/12	 mr-1 ">
                     <template #prefix>
                       <svg class="icon" aria-hidden="true">
                         <use xlink:href="#icon-yanzhengma-"/>
@@ -157,7 +149,7 @@ function buttonHandle () {
           </a-button>
         </div>
         <div>
-          <a-button type="primary" size="large" block @click="buttonHandle">
+          <a-button type="primary" size="large" block @click="submit">
             登录
           </a-button>
         </div>
