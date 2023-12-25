@@ -9,46 +9,66 @@ import {
 } from '@ant-design/icons-vue';
 import { reactive, ref } from 'vue';
 import openNotification from '@/utils/notification.ts'
+import router from '@/router'
 
+const size = ref<string>('large')
+const activeKey = ref<string>('1')
+const checked = ref<boolean>(false)
 
-import router from '../router'
-const activeKey = ref('1')
-const phone = ref('')
-const verify = ref('')
-const size = ref('large')
+const changHandle = (key: string) => activeKey.value = key
+const disabled = ref<boolean>(false)
+const time = ref<number>(60)
 
+// Log in using your phone
+const phone = ref<string>('')
+const verify = ref<string>('')
 
-
-function tabClick() {
-  console.log("被点击了")
-}
-function changHandle(key: string) {
-  console.log(key)
-}
-
-
-// form data type
+// Log in with an account
 interface FormState {
-  username: string;
-  password: string;
+  username: string
+  password: string
 }
 
 const formState = reactive<FormState>({
   username: '',
-  password: '',
-});
-const onFinish = (values: FormState) => {
-  if (values.username === 'admin' && values.password === 'admin' ){
-    router.push('home')
-  } else {
-    console.log(values.username)
-    console.log(values.password)
-    openNotification('error', '账号或密码错误，请检查！')
-  }
-};
+  password: ''
+})
 
+const clickHandler = () => {
+  if (phone.value !== ''){
+    openNotification('success', `获取成功，请使用暗号：9527`)
+    disabled.value = true
+    const reduce = () => {
+      if (time.value === 0) {
+        clearInterval(interval)
+        disabled.value = false
+        time.value = 60
+      } else {
+        time.value --
+      }
+    }
+    const interval = setInterval(reduce, 1000)
+  }else {
+    openNotification('info', '请先输入手机号码！')
+  }
+}
 const submit = () => {
-  console.log(formState)
+  if (activeKey.value === '1'){
+    if (formState.username === 'admin' && formState.password === 'admin'){
+      router.push('home')
+      openNotification('success', '登录成功！')
+    } else {
+      openNotification('error', '账号或密码错误，请检查！')
+    }
+  }
+  else if (activeKey.value === '2'){
+    if (phone.value !== '' && verify.value === '9527' ) {
+      router.push('home')
+      openNotification('success', '登录成功！')
+    } else {
+      openNotification('error', '手机号为空或验证码错误，请检查！')
+    }
+  }
 }
 
 </script>
@@ -56,93 +76,87 @@ const submit = () => {
 <template>
   <div class="flex justify-center h-screen w-full">
     <div class="container">
-      <!--title area-->
+      <!--header area-->
       <div class="header">
         <h1>《滕王阁序》</h1>
-        <p>
-          老当益壮，宁移白首之心？穷且益坚，不坠青云之志。
-        </p>
-        <p>
-          东隅已逝，桑榆非晚。
-        </p>
+        <p>老当益壮，宁移白首之心？穷且益坚，不坠青云之志。</p>
+        <p>东隅已逝，桑榆非晚。</p>
       </div>
       <!--main area-->
       <div class="main">
-        <div>
-          <a-tabs v-model:activeKey="activeKey" centered @tab-click="tabClick" @change="changHandle">
-            <!--login method 1-->
-            <a-tab-pane key="1" tab="账号密码登录">
-              <a-space direction="vertical" class="w-full" :size="size">
-                <a-form
-                  :model="formState"
-                  name="basic"
-                  autocomplete="off"
-                  @finish="onFinish"
+        <a-tabs v-model:activeKey="activeKey" centered @change="changHandle">
+          <!--login method 1-->
+          <a-tab-pane key="1" tab="账号密码登录">
+            <a-space direction="vertical" class="w-full" :size="size">
+              <a-form
+                :model="formState"
+                name="basic"
+                autocomplete="off"
+              >
+                <!--form - username-->
+                <a-form-item
+                  name="username"
+                  :rules="[{ required: true, message: '请输入账号!' }]"
                 >
-                  <!--form - username-->
-                  <a-form-item
-                    name="username"
-                    :rules="[{ required: true, message: '请输入账号!' }]"
-                  >
-                    <a-input v-model:value="formState.username" placeholder="usernames : admin" :size="size">
-                      <template #prefix>
-                        <svg class="icon" aria-hidden="true">
-                          <use xlink:href="#icon-icon-user"/>
-                        </svg>
-                      </template>
-                    </a-input>
-                  </a-form-item>
-                  <!--form - password-->
-                  <a-form-item
-                    name="password"
-                    :rules="[{ required: true, message: '请输入密码!' }]"
-                  >
-                    <a-input-password v-model:value="formState.password" placeholder="passwrod : admin" :size="size">
-                      <template #prefix>
-                        <svg class="icon" aria-hidden="true">
-                          <use xlink:href="#icon-Password"/>
-                        </svg>
-                      </template>
-                      <template #iconRender="show">
-                        <EyeTwoTone v-if="show" />
-                        <EyeInvisibleOutlined v-else />
-                      </template>
-                    </a-input-password>
-                  </a-form-item>
-                </a-form>
-              </a-space>
-            </a-tab-pane>
-            <!--login method 2-->
-            <a-tab-pane key="2" tab="手机号码登录">
-              <a-space direction="vertical" class="w-full" :size="size">
-                <!--phoneNumber-->
-                <a-input v-model:value="phone" placeholder="phoneNumber" :size="size">
-                  <template #prefix>
-                    <svg class="icon" aria-hidden="true">
-                      <use xlink:href="#icon-phone_iphone" />
-                    </svg>
-                  </template>
-                </a-input>
-                <!--verify-->
-                <div class="flex justify-between">
-                  <a-input v-model:value="verify" placeholder="verify" :size="size" class="w-8/12	 mr-1 ">
+                  <a-input v-model:value="formState.username" placeholder="username : admin" :size="size">
                     <template #prefix>
                       <svg class="icon" aria-hidden="true">
-                        <use xlink:href="#icon-yanzhengma-"/>
+                        <use xlink:href="#icon-icon-user"/>
                       </svg>
                     </template>
                   </a-input>
-                  <a-button class="w-4/12" :size="size">
-                    获取验证码
-                  </a-button>
-                </div>
-              </a-space>
-            </a-tab-pane>
-          </a-tabs>
-        </div>
+                </a-form-item>
+                <!--form - password-->
+                <a-form-item
+                  class="mb-0"
+                  name="password"
+                  :rules="[{ required: true, message: '请输入密码!' }]"
+                >
+                  <a-input-password v-model:value="formState.password" placeholder="passwrod : admin" :size="size">
+                    <template #prefix>
+                      <svg class="icon" aria-hidden="true">
+                        <use xlink:href="#icon-Password"/>
+                      </svg>
+                    </template>
+                    <template #iconRender="show">
+                      <EyeTwoTone v-if="show" />
+                      <EyeInvisibleOutlined v-else />
+                    </template>
+                  </a-input-password>
+                </a-form-item>
+              </a-form>
+            </a-space>
+          </a-tab-pane>
+          <!--login method 2-->
+          <a-tab-pane key="2" tab="手机号码登录">
+            <a-space direction="vertical" class="w-full" :size="size">
+              <!--phoneNumber-->
+              <a-input v-model:value="phone" placeholder="phoneNumber" :size="size">
+                <template #prefix>
+                  <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#icon-phone_iphone" />
+                  </svg>
+                </template>
+              </a-input>
+              <!--verify-->
+              <div class="flex justify-between">
+                <a-input v-model:value="verify" placeholder="verify" :size="size" class="w-8/12	 mr-1 ">
+                  <template #prefix>
+                    <svg class="icon" aria-hidden="true">
+                      <use xlink:href="#icon-yanzhengma-"/>
+                    </svg>
+                  </template>
+                </a-input>
+                <a-button class="w-4/12" :size="size" :disabled="disabled" @click="clickHandler">
+                  <span>{{ disabled ? `${time} s` : `获取验证码` }}</span>
+                </a-button>
+              </div>
+            </a-space>
+          </a-tab-pane>
+        </a-tabs>
         <div class="flex justify-between w-full py-5 select-none">
           <a-checkbox v-model:checked="checked" class="flex items-center text-sm">
-            记住密码
+            自动登录
           </a-checkbox>
           <a-button type="link" href="#" class="text-sm pr-0">
             忘记密码
@@ -171,14 +185,14 @@ const submit = () => {
           </a-button>
         </div>
       </div>
-      <!--foot area-->
+      <!--footer area-->
       <div class="footer">
         <div class="flex justify-center mb-2">
           <a-button type="link" href="#">
             GitHub
           </a-button>
           <a-button type="link" href="#">
-            GitHub
+            GitHu
           </a-button>
           <a-button type="link" href="#">
             GitHub
