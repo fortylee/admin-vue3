@@ -3,11 +3,9 @@
 </script>
 
 <template>
-  <div>
-    Homepage
-  </div>
+  <div>404page</div>
 </template>
 
-<style scoped>
+<style scoped lang = "postcss">
 
 </style>

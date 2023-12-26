@@ -15,36 +15,31 @@ const size = ref<string>('large')
 const activeKey = ref<string>('1')
 const checked = ref<boolean>(false)
 
-const changHandle = (key: string) => activeKey.value = key
-const disabled = ref<boolean>(false)
-const time = ref<number>(60)
-
-// Log in using your phone
-const phone = ref<string>('')
-const verify = ref<string>('')
-
-// Log in with an account
-interface FormState {
-  username: string
-  password: string
+// 清空输入框
+const changeHandler = () => {
+  formState.username = ''
+  formState.password = ''
+  phone.value = ''
+  verify.value = ''
 }
 
-const formState = reactive<FormState>({
-  username: '',
-  password: ''
-})
+// 手机号码登录
+const phone = ref<string>('')
+const verify = ref<string>('')
+const disabled = ref<boolean>(false)
+const verifyTime = ref<number>(60)
 
 const clickHandler = () => {
   if (phone.value !== ''){
     openNotification('success', `获取成功，请使用暗号：9527`)
     disabled.value = true
     const reduce = () => {
-      if (time.value === 0) {
+      if (verifyTime.value === 0) {
         clearInterval(interval)
         disabled.value = false
-        time.value = 60
+        verifyTime.value = 60
       } else {
-        time.value --
+        verifyTime.value --
       }
     }
     const interval = setInterval(reduce, 1000)
@@ -52,6 +47,19 @@ const clickHandler = () => {
     openNotification('info', '请先输入手机号码！')
   }
 }
+
+// 账号密码登录
+interface FormState {
+  username: string;
+  password: string;
+}
+
+const formState = reactive<FormState>({
+  username: '',
+  password: ''
+})
+
+
 const submit = () => {
   if (activeKey.value === '1'){
     if (formState.username === 'admin' && formState.password === 'admin'){
@@ -76,16 +84,16 @@ const submit = () => {
 <template>
   <div class="flex justify-center h-screen w-full">
     <div class="container">
-      <!--header area-->
+      <!--头部区域-->
       <div class="header">
         <h1>《滕王阁序》</h1>
         <p>老当益壮，宁移白首之心？穷且益坚，不坠青云之志。</p>
         <p>东隅已逝，桑榆非晚。</p>
       </div>
-      <!--main area-->
+      <!--主要区域-->
       <div class="main">
-        <a-tabs v-model:activeKey="activeKey" centered @change="changHandle">
-          <!--login method 1-->
+        <a-tabs v-model:activeKey="activeKey" centered @change="changeHandler">
+          <!--登录方法1：账号密码-->
           <a-tab-pane key="1" tab="账号密码登录">
             <a-space direction="vertical" class="w-full" :size="size">
               <a-form
@@ -93,12 +101,12 @@ const submit = () => {
                 name="basic"
                 autocomplete="off"
               >
-                <!--form - username-->
+                <!--账号-->
                 <a-form-item
                   name="username"
                   :rules="[{ required: true, message: '请输入账号!' }]"
                 >
-                  <a-input v-model:value="formState.username" placeholder="username : admin" :size="size">
+                  <a-input v-model:value="formState.username" placeholder="userName : admin" :size="size">
                     <template #prefix>
                       <svg class="icon" aria-hidden="true">
                         <use xlink:href="#icon-icon-user"/>
@@ -106,13 +114,13 @@ const submit = () => {
                     </template>
                   </a-input>
                 </a-form-item>
-                <!--form - password-->
+                <!--密码-->
                 <a-form-item
                   class="mb-0"
                   name="password"
                   :rules="[{ required: true, message: '请输入密码!' }]"
                 >
-                  <a-input-password v-model:value="formState.password" placeholder="passwrod : admin" :size="size">
+                  <a-input-password v-model:value="formState.password" placeholder="passWord : admin" :size="size">
                     <template #prefix>
                       <svg class="icon" aria-hidden="true">
                         <use xlink:href="#icon-Password"/>
@@ -127,10 +135,10 @@ const submit = () => {
               </a-form>
             </a-space>
           </a-tab-pane>
-          <!--login method 2-->
+          <!--登录方法2：手机号码-->
           <a-tab-pane key="2" tab="手机号码登录">
             <a-space direction="vertical" class="w-full" :size="size">
-              <!--phoneNumber-->
+              <!--手机号-->
               <a-input v-model:value="phone" placeholder="phoneNumber" :size="size">
                 <template #prefix>
                   <svg class="icon" aria-hidden="true">
@@ -138,7 +146,7 @@ const submit = () => {
                   </svg>
                 </template>
               </a-input>
-              <!--verify-->
+              <!--验证码-->
               <div class="flex justify-between">
                 <a-input v-model:value="verify" placeholder="verify" :size="size" class="w-8/12	 mr-1 ">
                   <template #prefix>
@@ -148,7 +156,7 @@ const submit = () => {
                   </template>
                 </a-input>
                 <a-button class="w-4/12" :size="size" :disabled="disabled" @click="clickHandler">
-                  <span>{{ disabled ? `${time} s` : `获取验证码` }}</span>
+                  <span>{{ disabled ? `${verifyTime} s` : `获取验证码` }}</span>
                 </a-button>
               </div>
             </a-space>
@@ -163,12 +171,14 @@ const submit = () => {
           </a-button>
         </div>
         <div>
-          <a-button type="primary" size="large" block @click="submit">
+          <a-button type="primary" :size="size" block @click="submit">
             登录
           </a-button>
         </div>
         <div class="flex justify-between mt-3 items-center">
-          <span class="text-sm">其他登录方式</span>
+          <span class="text-sm">
+            其他登录方式
+          </span>
           <div class="grow ">
             <a-button type="link" class="text-gray-500 pr-1 pt-0" >
               <TwitterCircleFilled class="text-2xl"/>
@@ -185,7 +195,7 @@ const submit = () => {
           </a-button>
         </div>
       </div>
-      <!--footer area-->
+      <!--页脚区域-->
       <div class="footer">
         <div class="flex justify-center mb-2">
           <a-button type="link" href="#">
@@ -203,12 +213,12 @@ const submit = () => {
         </div>
       </div>
     </div>
-    <!--FloatButton-->
+    <!--浮点按钮-->
     <a-float-button-group trigger="hover" type="primary">
       <template #icon>
         <CustomerServiceOutlined />
       </template>
-      <a-float-button href="https://github.com/fortylee/admin-vue3" target="_blank">
+      <a-float-button href="#">
         <template #icon>
           <GithubFilled />
         </template>
@@ -219,12 +229,15 @@ const submit = () => {
 
 <style scoped lang = "postcss">
 .container {
-  @apply flex flex-col justify-between  w-11/12 sm:w-96 md:w-96 lg:w-96 xl:w-96 2xl:w-96;
+  @apply flex flex-col justify-center w-11/12 sm:w-96 md:w-96 lg:w-96 xl:w-96 2xl:w-96;
 }
 .header {
-  @apply text-center italic mt-24;
+  @apply text-center italic h-1/6;
+}
+.main {
+  @apply h-4/6;
 }
 .footer {
-  @apply flex flex-col mb-4 text-neutral-400 text-sm;
+  @apply flex flex-col text-neutral-400 text-sm;
 }
 </style>
