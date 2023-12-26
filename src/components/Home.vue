@@ -1,11 +1,14 @@
 <script setup lang = "ts">
+import DefaultLayout from '@/layouts/DefaultLayout.vue'
 
 </script>
 
 <template>
-  <div>
-    Homepage
-  </div>
+  <DefaultLayout>
+    <div>
+      Homepage
+    </div>
+  </DefaultLayout>
 </template>
 
 <style scoped>

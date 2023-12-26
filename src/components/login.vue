@@ -15,7 +15,17 @@ const size = ref<string>('large')
 const activeKey = ref<string>('1')
 const checked = ref<boolean>(false)
 
-const changHandle = (key: string) => activeKey.value = key
+const changHandle = (key: string) => {
+  activeKey.value = key
+  if (key === '2') {
+    formState.username = ''
+    formState.password = ''
+
+  } else if (key === '1') {
+    phone.value = ''
+    verify.value = ''
+  }
+}
 const disabled = ref<boolean>(false)
 const time = ref<number>(60)
 
@@ -25,8 +35,8 @@ const verify = ref<string>('')
 
 // Log in with an account
 interface FormState {
-  username: string
-  password: string
+  username: string;
+  password: string;
 }
 
 const formState = reactive<FormState>({
@@ -93,7 +103,7 @@ const submit = () => {
                 name="basic"
                 autocomplete="off"
               >
-                <!--form - username-->
+                <!--formData-username-->
                 <a-form-item
                   name="username"
                   :rules="[{ required: true, message: '请输入账号!' }]"
@@ -106,7 +116,7 @@ const submit = () => {
                     </template>
                   </a-input>
                 </a-form-item>
-                <!--form - password-->
+                <!--formData-password-->
                 <a-form-item
                   class="mb-0"
                   name="password"
@@ -168,7 +178,9 @@ const submit = () => {
           </a-button>
         </div>
         <div class="flex justify-between mt-3 items-center">
-          <span class="text-sm">其他登录方式</span>
+          <span class="text-sm">
+            其他登录方式
+          </span>
           <div class="grow ">
             <a-button type="link" class="text-gray-500 pr-1 pt-0" >
               <TwitterCircleFilled class="text-2xl"/>
@@ -208,7 +220,7 @@ const submit = () => {
       <template #icon>
         <CustomerServiceOutlined />
       </template>
-      <a-float-button href="https://github.com/fortylee/admin-vue3" target="_blank">
+      <a-float-button href="#">
         <template #icon>
           <GithubFilled />
         </template>
