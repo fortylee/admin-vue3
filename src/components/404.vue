@@ -1,11 +1,16 @@
 <script setup lang = "ts">
+import DefaultLayout from '@/layouts/DefaultLayout.vue'
 
 </script>
 
 <template>
-  <div>404page</div>
+  <DefaultLayout>
+    <div>
+      Homepage
+    </div>
+  </DefaultLayout>
 </template>
 
-<style scoped lang = "postcss">
+<style scoped>
 
 </style>
