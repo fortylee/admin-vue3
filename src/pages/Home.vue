@@ -6,7 +6,7 @@ import DefaultLayout from '@/components/layouts/DefaultLayout.vue'
 <template>
   <DefaultLayout>
     <div>
-      Homepage
+      homePage
     </div>
   </DefaultLayout>
 </template>

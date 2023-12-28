@@ -9,7 +9,56 @@ const logout = () => {
   router.push('login')
   openNotification('success', '已退出登录！')
 }
+// const changeHandler = (key:string) => {
+//   router.push(key)
+// }
+const slotName = ref<string>('')
 
+function changeTab (key:string) {
+  console.log(key)
+  slotName.value = key
+  // router.push(key)
+}
+import { ref } from 'vue';
+const panes = ref<{ title: string; content: string; key: string; closable?: boolean }[]>([
+  { title: 'Tab 1', content: 'Content of Tab 1', key: '1' },
+  { title: 'Tab 2', content: 'Content of Tab 2', key: '2' },
+  { title: 'Tab 3', content: 'Content of Tab 3', key: '3', closable: false },
+]);
+
+const activeKey = ref(panes.value[0].key);
+
+const newTabIndex = ref(0);
+
+const add = () => {
+  activeKey.value = `newTab${++newTabIndex.value}`;
+  panes.value.push({ title: 'New Tab', content: 'Content of new Tab', key: activeKey.value });
+};
+
+const remove = (targetKey: string) => {
+  let lastIndex = 0;
+  panes.value.forEach((pane, i) => {
+    if (pane.key === targetKey) {
+      lastIndex = i - 1;
+    }
+  });
+  panes.value = panes.value.filter(pane => pane.key !== targetKey);
+  if (panes.value.length && activeKey.value === targetKey) {
+    if (lastIndex >= 0) {
+      activeKey.value = panes.value[lastIndex].key;
+    } else {
+      activeKey.value = panes.value[0].key;
+    }
+  }
+};
+
+const onEdit = (targetKey: string | MouseEvent, action: string) => {
+  if (action === 'add') {
+    add();
+  } else {
+    remove(targetKey as string);
+  }
+};
 </script>
 
 <template>
@@ -25,11 +74,11 @@ const logout = () => {
       </div>
       <!--侧边栏菜单-->
       <a-menu theme="dark" mode="inline">
-        <a-sub-menu key="home">
+        <a-sub-menu key="home" @click="clickMenu">
           <template #title>
             <span>
               <AppstoreOutlined />
-              <span>Home</span>
+              <span>工作台</span>
             </span>
           </template>
           <a-menu-item key="t">
@@ -39,46 +88,23 @@ const logout = () => {
             修改密码
           </a-menu-item>
         </a-sub-menu>
-        <a-menu-item key="1">
-          <AppstoreOutlined />
-          <span>壹</span>
-        </a-menu-item>
-        <a-menu-item key="2">
-          <AppstoreOutlined />
-          <span>贰</span>
-        </a-menu-item>
-        <a-menu-item key="3">
-          <AppstoreOutlined />
-          <span>叁</span>
-        </a-menu-item>
-        <a-menu-item key="4">
-          <AppstoreOutlined />
-          <span>肆</span>
-        </a-menu-item>
-        <a-menu-item key="5">
-          <AppstoreOutlined />
-          <span>伍</span>
-        </a-menu-item>
-        <a-menu-item key="6">
-          <AppstoreOutlined />
-          <span>陆</span>
-        </a-menu-item>
-        <a-menu-item key="7">
-          <AppstoreOutlined />
-          <span>柒</span>
-        </a-menu-item>
-        <a-menu-item key="8">
-          <AppstoreOutlined />
-          <span>捌</span>
-        </a-menu-item>
-        <a-menu-item key="9">
-          <AppstoreOutlined />
-          <span>玖</span>
-        </a-menu-item>
-        <a-menu-item key="10">
-          <AppstoreOutlined />
-          <span>拾</span>
-        </a-menu-item>
+        <a-sub-menu key="1">
+          <template #title>
+            <span>
+              <AppstoreOutlined />
+              <span>权限管理</span>
+            </span>
+          </template>
+          <a-menu-item key="4">
+            账号管理
+          </a-menu-item>
+          <a-menu-item key="6">
+            权限组管理
+          </a-menu-item>
+          <a-menu-item key="9">
+            权限管理
+          </a-menu-item>
+        </a-sub-menu>
       </a-menu>
     </a-layout-sider>
     <a-layout>
@@ -119,8 +145,15 @@ const logout = () => {
         </a-dropdown>
       </a-layout-header>
       <!--主要区域-内容-->
-      <a-layout-content class="text-2xl">
-        <slot/>
+      <a-layout-content class="text-2xl" >
+        <!--tab标签-->
+        <div style="background-color:#ececec ">
+          <a-tabs v-model:activeKey="activeKey" type="editable-card" @edit="onEdit">
+            <a-tab-pane v-for="pane in panes" :key="pane.key" :tab="pane.title" :closable="pane.closable">
+              {{ pane.content }}
+            </a-tab-pane>
+          </a-tabs>
+        </div>
       </a-layout-content>
       <!--主要区域-页脚-->
       <a-layout-footer>

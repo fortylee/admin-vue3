@@ -10,15 +10,17 @@ import {
 import { reactive, ref } from 'vue';
 import openNotification from '@/utils/notification.ts'
 import router from '@/router'
+import axios from 'axios'
 
 const size = ref<string>('large')
 const activeKey = ref<string>('1')
 const checked = ref<boolean>(false)
+const loading = ref<boolean>(false)
 
 // 清空输入框
 const changeHandler = () => {
-  formState.username = ''
-  formState.password = ''
+  formState.userName = ''
+  formState.passWord = ''
   phone.value = ''
   verify.value = ''
 }
@@ -50,23 +52,30 @@ const clickHandler = () => {
 
 // 账号密码登录
 interface FormState {
-  username: string;
-  password: string;
+  userName: string;
+  passWord: string;
 }
 
 const formState = reactive<FormState>({
-  username: '',
-  password: ''
+  userName: '',
+  passWord: ''
 })
 
 
 const submit = () => {
+  // todo 待完善
   if (activeKey.value === '1'){
-    if (formState.username === 'admin' && formState.password === 'admin'){
-      router.push('home')
-      openNotification('success', '登录成功！')
-    } else {
-      openNotification('error', '账号或密码错误，请检查！')
+    if (formState.userName != '' && formState.passWord != ''){
+      loading.value = true
+      axios.post('http://localhost:3000/login', formState).then(
+        (response) => {
+          console.log(response)
+        }
+      ).catch().finally()
+    } else if (formState.userName === ''){
+      openNotification('error','请输入账号！')
+    } else if (formState.passWord === '') {
+      openNotification('error', '请输入密码！')
     }
   }
   else if (activeKey.value === '2'){
@@ -103,10 +112,10 @@ const submit = () => {
               >
                 <!--账号-->
                 <a-form-item
-                  name="username"
+                  name="userName"
                   :rules="[{ required: true, message: '请输入账号!' }]"
                 >
-                  <a-input v-model:value="formState.username" placeholder="userName : admin" :size="size">
+                  <a-input v-model:value="formState.userName" placeholder="userName : admin" :size="size">
                     <template #prefix>
                       <svg class="icon" aria-hidden="true">
                         <use xlink:href="#icon-icon-user"/>
@@ -120,7 +129,7 @@ const submit = () => {
                   name="password"
                   :rules="[{ required: true, message: '请输入密码!' }]"
                 >
-                  <a-input-password v-model:value="formState.password" placeholder="passWord : admin" :size="size">
+                  <a-input-password v-model:value="formState.passWord" placeholder="passWord : admin" :size="size">
                     <template #prefix>
                       <svg class="icon" aria-hidden="true">
                         <use xlink:href="#icon-Password"/>
@@ -171,7 +180,7 @@ const submit = () => {
           </a-button>
         </div>
         <div>
-          <a-button type="primary" :size="size" block @click="submit">
+          <a-button type="primary" :size="size" block :loading="loading" @click="submit">
             登录
           </a-button>
         </div>
@@ -202,7 +211,7 @@ const submit = () => {
             GitHub
           </a-button>
           <a-button type="link" href="#">
-            GitHu
+            GitHub
           </a-button>
           <a-button type="link" href="#">
             GitHub
