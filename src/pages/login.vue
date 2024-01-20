@@ -6,7 +6,7 @@ import {
   GithubFilled,
   AlipayCircleFilled
 } from '@ant-design/icons-vue';
-import { reactive, ref } from 'vue';
+import { onBeforeMount, reactive, ref } from 'vue'
 import openNotification from '@/utils/notification.ts'
 import router from '@/router'
 import axios from 'axios'
@@ -16,6 +16,20 @@ const size = ref<string>('large')
 const activeKey = ref<string>('1')
 const checked = ref<boolean>(false)
 const loading = ref<boolean>(false)
+
+
+const img = ref()
+
+onBeforeMount(() => {
+  axios.get('http://localhost:3000/register').then(
+    (response) => {
+      img.value = response.data
+    }
+  )
+})
+const forgot = () => {
+  router.push('/forgot')
+}
 
 // 清空输入框
 const changeHandler = () => {
@@ -112,7 +126,6 @@ const submit = () => {
             </a-form-item>
             <!--密码-->
             <a-form-item
-              class="mb-0"
               name="password"
               :rules="[{ required: true, message: '请输入密码!' }]"
             >
@@ -128,6 +141,26 @@ const submit = () => {
                 </template>
               </a-input-password>
             </a-form-item>
+            <!--验证码-->
+            <a-form-item
+              name="username"
+              :rules="[{ required: true, message: `验证码不能为空！` }]"
+            >
+              <a-row justify="space-between" align="middle">
+                <a-col :span="14">
+                  <a-input placeholder="请输入验证码" :size="size">
+                    <template #prefix>
+                      <svg class="icon" aria-hidden="true" font-size="20px">
+                        <use xlink:href="#icon-yanzhengma-"/>
+                      </svg>
+                    </template>
+                  </a-input>
+                </a-col>
+                <a-col>
+                  <span v-html="img"></span>
+                </a-col>
+              </a-row>
+            </a-form-item>
           </a-form>
         </a-space>
       </a-tab-pane>
@@ -137,7 +170,7 @@ const submit = () => {
           <!--手机号-->
           <a-input v-model:value="phone" placeholder="phoneNumber" :size="size">
             <template #prefix>
-              <svg class="icon" aria-hidden="true">
+              <svg class="icon" aria-hidden="true" font-size="20px">
                 <use xlink:href="#icon-phone_iphone" />
               </svg>
             </template>
@@ -146,7 +179,7 @@ const submit = () => {
           <div class="flex justify-between">
             <a-input v-model:value="verify" placeholder="verify" :size="size" class="w-8/12	 mr-1 ">
               <template #prefix>
-                <svg class="icon" aria-hidden="true">
+                <svg class="icon" aria-hidden="true" font-size="20px">
                   <use xlink:href="#icon-yanzhengma-"/>
                 </svg>
               </template>
@@ -162,7 +195,7 @@ const submit = () => {
       <a-checkbox v-model:checked="checked" class="flex items-center text-sm">
         自动登录
       </a-checkbox>
-      <a-button type="link" href="#" class="text-sm pr-0">
+      <a-button type="link" href="#" class="text-sm pr-0" @click="forgot">
         忘记密码
       </a-button>
     </div>

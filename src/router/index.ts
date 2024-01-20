@@ -4,6 +4,7 @@ const routes = [
     { path: '/', redirect: '/login'},
     { path: '/login', name: 'login', component: () => import('@/pages/login.vue') },
     { path: '/register', name: 'register', component: () => import('@/pages/register.vue') },
+    { path: '/forgot', name: 'forgot', component: () => import('@/pages/forgot.vue') },
     { path: '/home', name: 'Home', component: () => import('@/pages/home.vue') },
     { path: '/404', name: '404', component: () => import('@/components/404.vue') },
 ]
