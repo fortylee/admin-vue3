@@ -147,7 +147,7 @@ const submit = () => {
               :rules="[{ required: true, message: `验证码不能为空！` }]"
             >
               <a-row justify="space-between" align="middle">
-                <a-col :span="14">
+                <a-col :span="17">
                   <a-input placeholder="请输入验证码" :size="size">
                     <template #prefix>
                       <svg class="icon" aria-hidden="true" font-size="20px">
@@ -156,8 +156,7 @@ const submit = () => {
                     </template>
                   </a-input>
                 </a-col>
-                <a-col>
-                  <span v-html="img"></span>
+                <a-col v-html="img" class="flex justify-center">
                 </a-col>
               </a-row>
             </a-form-item>

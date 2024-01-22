@@ -1,23 +1,46 @@
 <script setup lang = "ts">
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons-vue'
-import { ref, onBeforeMount, nextTick } from 'vue'
+import { ref, onBeforeMount } from 'vue'
 import LoginLayout from '@/layouts/login-layout.vue'
-const userName = ref<string>('');
-const size = ref<string>('large')
 import { reactive } from 'vue';
 import axios from 'axios'
+import type { Rule } from 'ant-design-vue/es/form';
 
+const size = ref<string>('large')
+
+// 表单数据
 interface FormState {
   username: string;
-  password: string;
-  remember: boolean;
+  passwordOne: string;
+  passwordTwo: string;
+  verify: string;
 }
-
 const formState = reactive<FormState>({
   username: '',
-  password: '',
-  remember: true,
+  passwordOne: '',
+  passwordTwo: '',
+  verify: '',
 });
+
+// 校验规则
+const checkPassWord = async (_rule: Rule, value: string) => {
+  if (!value) {
+    return Promise.reject(`密码不能为空！`)
+  }
+  if (value !== formState.passwordOne) {
+    return Promise.reject(`重复密码不一致！`)
+  }
+}
+const rules: Record<string, Rule[]> = {
+  username: [
+    { required: true, message: `账号不能为空！` },
+    { min: 1, max: 10, message: `请输入账号1～10位` }],
+  passwordOne: [{ required: true, message: `密码不能为空！` },
+    { min: 1, max: 10, message: `请输入密码3～15位` }],
+  passwordTwo: [{ validator: checkPassWord }],
+  verify: [{ required: true, message: `验证码不能为空！` }]
+}
+
 const onFinish = (values: any) => {
   console.log('Success:', values);
 };
@@ -53,15 +76,14 @@ const clickha = () => {
       <a-form
         :model="formState"
         name="basic"
+        :rules="rules"
         autocomplete="off"
         @finish="onFinish"
         @finishFailed="onFinishFailed"
       >
-        <a-form-item
-          name="username"
-          :rules="[{ required: true, message: `账号不能为空！` }]"
-        >
-          <a-input placeholder="请输入账号" :size="size">
+        <!--账号-->
+        <a-form-item name="username">
+          <a-input placeholder="请输入账号" :size="size" v-model:value="formState.username">
             <template #prefix>
               <svg class="icon" aria-hidden="true">
                 <use xlink:href="#icon-icon-user"/>
@@ -69,12 +91,9 @@ const clickha = () => {
             </template>
           </a-input>
         </a-form-item>
-        
-        <a-form-item
-          name="password"
-          :rules="[{ required: true, message: `密码不能为空！` }]"
-        >
-          <a-input-password placeholder="请输入密码" :size="size">
+        <!--密码-->
+        <a-form-item name="passwordOne">
+          <a-input-password placeholder="请输入密码" :size="size" v-model:value="formState.passwordOne">
             <template #prefix>
               <svg class="icon" aria-hidden="true">
                 <use xlink:href="#icon-Password"/>
@@ -86,12 +105,9 @@ const clickha = () => {
             </template>
           </a-input-password>
         </a-form-item>
-        
-        <a-form-item
-          name="password"
-          :rules="[{ required: true, message: `密码不能为空！` }]"
-        >
-          <a-input-password placeholder="请再次输入密码" :size="size">
+        <!--重复密码-->
+        <a-form-item name="passwordTwo">
+          <a-input-password placeholder="请再次输入密码" :size="size" v-model:value="formState.passwordTwo">
             <template #prefix>
               <svg class="icon" aria-hidden="true">
                 <use xlink:href="#icon-Password"/>
@@ -103,14 +119,11 @@ const clickha = () => {
             </template>
           </a-input-password>
         </a-form-item>
-        
-        <a-form-item
-          name="username"
-          :rules="[{ required: true, message: `验证码不能为空！` }]"
-        >
+        <!--图形验证码-->
+        <a-form-item name="verify">
           <a-row justify="space-between" align="middle">
-            <a-col :span="14">
-              <a-input placeholder="请输入验证码" :size="size">
+            <a-col :span="17">
+              <a-input placeholder="请输入验证码" :size="size" v-model:value="formState.verify">
                 <template #prefix>
                   <svg class="icon" aria-hidden="true" font-size="20px">
                     <use xlink:href="#icon-yanzhengma-"/>
@@ -118,11 +131,11 @@ const clickha = () => {
                 </template>
               </a-input>
             </a-col>
-            <a-col>
-              <span @click="clickha" v-html="img"/>
+            <a-col v-html="img" class="flex justify-center">
             </a-col>
           </a-row>
         </a-form-item>
+        <!--功能区域-->
         <a-form-item>
           <a-row justify="space-between" align="middle">
             <a-col :span="15">

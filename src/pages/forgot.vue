@@ -12,6 +12,10 @@ const clickChange =() => {
   current.value = 1
   activeKey.value = '2'
 }
+const wanc = () => {
+  current.value = 2
+  activeKey.value = '3'
+}
 </script>
 
 <template>
@@ -38,6 +42,7 @@ const clickChange =() => {
         ]"
       />
       <a-tabs v-model:activeKey="activeKey">
+        <!--第一步-->
         <a-tab-pane key="1" >
           <a-row align="middle" justify="space-between" class="my-8">
             <a-col :span="19">
@@ -53,10 +58,24 @@ const clickChange =() => {
             下一步
           </a-button>
         </a-tab-pane>
+        <!--第二步-->
         <a-tab-pane key="2" force-render>
-          <a-input :size="size" placehodler/>
+          <a-input :size="size" placeholder="请输入密码"/>
+          <a-input :size="size" placeholder="请再次输入密码" class="my-8"/>
+          <a-button type="primary" class="w-full" :size="size" @click="wanc">完成</a-button>
         </a-tab-pane>
-        <a-tab-pane key="3">Content of Tab Pane 3</a-tab-pane>
+        <!--第三步-->
+        <a-tab-pane key="3">
+          <div class="flex flex-col">
+            <a-progress type="circle" :percent="100" class="text-center" />
+            <span class="text-center my-8">恭喜您，完成密码修改</span>
+            <router-link to="/login">
+              <a-button type="primary" :size="size" class="w-full">
+                完成
+              </a-button>
+            </router-link>
+          </div>
+        </a-tab-pane>
       </a-tabs>
     </div>
   </login-layout>
