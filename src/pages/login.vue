@@ -17,16 +17,24 @@ const activeKey = ref<string>('1')
 const checked = ref<boolean>(false)
 const loading = ref<boolean>(false)
 
-
-const img = ref()
+const captcha = ref<string>('')
 
 onBeforeMount(() => {
   axios.get('http://localhost:3000/register').then(
     (response) => {
-      img.value = response.data
+      captcha.value = response.data
     }
   )
 })
+
+const captchaHandler = () => {
+  axios.get('http://localhost:3000/register').then(
+    ({ data }) => {
+      captcha.value = data
+    }
+  )
+}
+
 const forgot = () => {
   router.push('/forgot')
 }
@@ -156,8 +164,7 @@ const submit = () => {
                     </template>
                   </a-input>
                 </a-col>
-                <a-col v-html="img" class="flex justify-center">
-                </a-col>
+                <a-col class="flex justify-center cursor-pointer" @click="captchaHandler" v-html="captcha"/>
               </a-row>
             </a-form-item>
           </a-form>
